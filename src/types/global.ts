@@ -1,4 +1,4 @@
 export enum ActivationStatus {
-  Active = 'ACTIVE',
-  DELETED = 'DELETED',
+  Active = "ACTIVE",
+  DELETED = "DELETED",
 }

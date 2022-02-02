@@ -1,10 +1,10 @@
-import { model, connect } from 'mongoose';
-import { IStore, Store, StoreSchema } from './store/schemas/store.schema';
+import { model, connect } from "mongoose";
+import { IStore, Store, StoreSchema } from "./store/schemas/store.schema";
 
-connect('mongodb://localhost/grocery-store')
+connect("mongodb://localhost/grocery-store")
   .then(() => {
-    console.log('MongoDB Connection Successfully Established');
-    const storeModel = model<IStore>(Store.name, StoreSchema, 'stores');
+    console.log("MongoDB Connection Successfully Established");
+    const storeModel = model<IStore>(Store.name, StoreSchema, "stores");
     const storeRecursively = async (store: object, storeId: string) => {
       const childStoreNames = Array.isArray(store) ? store : Object.keys(store);
 
@@ -31,7 +31,7 @@ connect('mongodb://localhost/grocery-store')
     (async () => {
       await storeModel.deleteMany({}).exec();
       const root = await new storeModel({
-        name: 'Srbija',
+        name: "Srbija",
         parentStore: null,
         createdAt: new Date(),
       }).save();
@@ -39,23 +39,23 @@ connect('mongodb://localhost/grocery-store')
       await storeRecursively(
         {
           Vojvodina: {
-            'Severnobacki okrug': {
-              Subotica: ['Radnja 1'],
+            "Severnobacki okrug": {
+              Subotica: ["Radnja 1"],
             },
-            'Juznobacki okrug': {
-              'Novi Sad': {
-                Detelinara: ['Radnja 2', 'Radnja 3'],
-                Liman: ['Radnja 4', 'Radnja 5'],
+            "Juznobacki okrug": {
+              "Novi Sad": {
+                Detelinara: ["Radnja 2", "Radnja 3"],
+                Liman: ["Radnja 4", "Radnja 5"],
               },
             },
           },
-          'Grad Beograd': {
-            'Novi Beograd': {
-              Bezanija: ['Radnja 6'],
+          "Grad Beograd": {
+            "Novi Beograd": {
+              Bezanija: ["Radnja 6"],
             },
             Vracar: {
-              Neimar: ['Radnja 7'],
-              'Crveni krst': ['Radnja 8', 'Radnja 9'],
+              Neimar: ["Radnja 7"],
+              "Crveni krst": ["Radnja 8", "Radnja 9"],
             },
           },
         },
@@ -66,7 +66,7 @@ connect('mongodb://localhost/grocery-store')
   })
   .catch((err: Error) => {
     console.log(
-      'MongoDB connection error. Please make sure MongoDB is running. ' + err,
+      "MongoDB connection error. Please make sure MongoDB is running. " + err,
     );
     // process.exit();
   });

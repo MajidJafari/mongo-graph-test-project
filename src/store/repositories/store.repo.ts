@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { IStore, Store } from '../schemas/store.schema';
-import { Model } from 'mongoose';
-import { StoreCreateDto } from '../dto/store.create.dto';
+import { Injectable } from "@nestjs/common";
+import { InjectModel } from "@nestjs/mongoose";
+import { IStore, Store } from "../schemas/store.schema";
+import { Model } from "mongoose";
+import { StoreCreateDto } from "../dto/store.create.dto";
 
 @Injectable()
 export class StoreRepo {

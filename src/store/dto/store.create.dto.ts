@@ -1,4 +1,4 @@
-import { ActivationStatus } from '../../types/global';
+import { ActivationStatus } from "../../types/global";
 
 export class StoreCreateDto {
   name: string;
