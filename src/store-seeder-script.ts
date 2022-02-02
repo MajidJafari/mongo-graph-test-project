@@ -3,7 +3,6 @@ import { IStore, Store, StoreSchema } from "./store/schemas/store.schema";
 
 connect("mongodb://localhost/grocery-store")
   .then(() => {
-    console.log("MongoDB Connection Successfully Established");
     const storeModel = model<IStore>(Store.name, StoreSchema, "stores");
     const storeRecursively = async (store: object, storeId: string) => {
       const childStoreNames = Array.isArray(store) ? store : Object.keys(store);
@@ -18,6 +17,8 @@ connect("mongodb://localhost/grocery-store")
             }).save(),
         ),
       );
+
+      console.log(childStoreNames.join("\n"));
 
       await Promise.all(
         childStores
@@ -35,6 +36,9 @@ connect("mongodb://localhost/grocery-store")
         parentStore: null,
         createdAt: new Date(),
       }).save();
+
+      console.log("-------------Stores Added Successfully-----------------");
+      console.log("Srbija");
 
       await storeRecursively(
         {
@@ -61,6 +65,7 @@ connect("mongodb://localhost/grocery-store")
         },
         root._id,
       );
+      console.log("--------------------------------------------");
       process.exit(1);
     })();
   })
