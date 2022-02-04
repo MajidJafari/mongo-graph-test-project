@@ -2,8 +2,8 @@ import { Body, Controller, HttpCode, Post } from "@nestjs/common";
 import { UserCreateDto } from "./dto/user.create.dto";
 import { UserRepo } from "./repositories/user.repo";
 import { GenericValidatorPipe } from "../components/generic-validator-pipe";
-import * as Joi from "joi";
 import { ActivationStatus, UserTypes } from "../types/global";
+import { Joi } from "../lib/custom-joi";
 
 @Controller("users")
 export class UserController {
@@ -18,7 +18,7 @@ export class UserController {
         type: Joi.string()
           .valid(...Object.values(UserTypes))
           .required(),
-        store: Joi.string().required(),
+        store: Joi.mongoId().required(),
         status: Joi.string().valid(...Object.values(ActivationStatus)),
       }),
     )
