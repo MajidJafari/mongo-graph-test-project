@@ -13,10 +13,6 @@ export class BaseApiError extends HttpException {
     super(message, httpCode);
     Object.setPrototypeOf(this, new.target.prototype);
 
-    this.name = name;
-    this.httpCode = httpCode;
-    this.details = details;
-
     Error.captureStackTrace(this);
 
     reason &&
@@ -24,5 +20,14 @@ export class BaseApiError extends HttpException {
         "xxxxxxxxxxxxxxxxxxxxxxxx ERROR OCCURRED xxxxxxxxxxxxxxxxxxxxxxxx",
       );
     reason && console.table({ reason });
+  }
+
+  getResponse() {
+    return {
+      status: this.httpCode,
+      name: this.name,
+      message: this.message,
+      details: this.details,
+    };
   }
 }
