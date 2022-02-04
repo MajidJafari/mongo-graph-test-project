@@ -1,25 +1,17 @@
-import { Document, Types } from "mongoose";
+import { Types } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { ActivationStatus } from "../../types/global";
+import { EntityDocument } from "../../types/global";
+import { BaseModel } from "../../components/base-model";
 
-export type IStore = Store & Document;
+export type IStore = EntityDocument<Store>;
 
 @Schema({ collection: "stores" })
-export class Store {
+export class Store extends BaseModel {
   @Prop({ required: true, unique: true })
   name: string;
 
   @Prop({ index: true, type: Types.ObjectId })
   parentStore: string;
-
-  @Prop({ default: ActivationStatus.Active })
-  status: ActivationStatus;
-
-  @Prop()
-  createdAt: Date;
-
-  @Prop()
-  updatedAt: Date;
 }
 
 export const StoreSchema = SchemaFactory.createForClass(Store);

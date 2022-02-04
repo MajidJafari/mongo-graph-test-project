@@ -1,28 +1,20 @@
-import { Document } from "mongoose";
+import { Types } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { ActivationStatus, UserTypes } from "../../types/global";
+import { EntityDocument, UserTypes } from "../../types/global";
+import { BaseModel } from "../../components/base-model";
 
-export type IUser = User & Document;
+export type IUser = EntityDocument<User>;
 
 @Schema({ collection: "users" })
-export class User {
+export class User extends BaseModel {
   @Prop({ required: true, unique: true })
   name: string;
 
   @Prop({ required: true, index: true })
   type: UserTypes;
 
-  @Prop({ index: true })
+  @Prop({ index: true, type: Types.ObjectId })
   store: string;
-
-  @Prop({ default: ActivationStatus.Active })
-  status: ActivationStatus;
-
-  @Prop()
-  createdAt: Date;
-
-  @Prop()
-  updatedAt: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -1,3 +1,5 @@
+import { Document } from "mongoose";
+
 export enum ActivationStatus {
   Active = "ACTIVE",
   DELETED = "DELETED",
@@ -11,3 +13,5 @@ export enum UserTypes {
   Employee = "EMPLOYEE",
   Manager = "MANAGER",
 }
+
+export type EntityDocument<T> = T & Document;
