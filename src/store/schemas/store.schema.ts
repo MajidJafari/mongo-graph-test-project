@@ -1,4 +1,4 @@
-import { Document, ObjectId } from "mongoose";
+import { Document, Types } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { ActivationStatus } from "../../types/global";
 
@@ -9,7 +9,7 @@ export class Store {
   @Prop({ required: true, unique: true })
   name: string;
 
-  @Prop({ index: true })
+  @Prop({ index: true, type: Types.ObjectId })
   parentStore: string;
 
   @Prop({ default: ActivationStatus.Active })
