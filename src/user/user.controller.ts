@@ -74,12 +74,9 @@ export class UserController {
   @Delete("/:id")
   @HttpCode(204)
   async delete(
-    @Param()
+    @Param(getIdValidationSchema())
     id,
   ) {
-    throw new NotImplemented({
-      className: this.constructor.name,
-      methodName: "delete",
-    });
+    await this.userRepo.update(id, { status: ActivationStatus.DELETED });
   }
 }
