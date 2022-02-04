@@ -44,6 +44,16 @@ describe("UserController (e2e)", () => {
         .send(updateDto)
         .expect(422);
     });
+
+    it("should throw proper error for non-existent entity", () => {
+      const updateDto: UserUpdateDto = {
+        name: "Majid Jafari 3",
+      };
+      return request(app.getHttpServer())
+        .put("/users/61fad128dedc69e21f645872")
+        .send(updateDto)
+        .expect(404);
+    });
   });
 
   describe("/users/:id (GET)", () => {
@@ -53,6 +63,13 @@ describe("UserController (e2e)", () => {
         .send()
         .expect(422);
     });
+
+    it("should throw proper error for non-existent entity", () => {
+      return request(app.getHttpServer())
+        .get("/users/61fad128dedc69e21f645872")
+        .send()
+        .expect(404);
+    });
   });
 
   describe("/users/:id (DELETE)", () => {
@@ -61,6 +78,13 @@ describe("UserController (e2e)", () => {
         .delete("/users/some-unvalidated-mongo-id")
         .send()
         .expect(422);
+    });
+
+    it("should throw proper error for non-existent entity", () => {
+      return request(app.getHttpServer())
+        .delete("/users/61fad128dedc69e21f645872")
+        .send()
+        .expect(404);
     });
   });
 });
