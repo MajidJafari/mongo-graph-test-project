@@ -54,4 +54,13 @@ describe("UserController (e2e)", () => {
         .expect(422);
     });
   });
+
+  describe("/users/:id (DELETE)", () => {
+    it("should throw an error for wrong data input", () => {
+      return request(app.getHttpServer())
+        .delete("/users/some-unvalidated-mongo-id")
+        .send()
+        .expect(422);
+    });
+  });
 });

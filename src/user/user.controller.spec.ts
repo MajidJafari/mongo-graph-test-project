@@ -1,7 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { UserController } from "./user.controller";
 import { User, UserSchema } from "./schemas/user.schema";
-import { UserTypes } from "../types/global";
+import { ActivationStatus, UserTypes } from "../types/global";
 import { UserRepo } from "./repositories/user.repo";
 import { MongooseModule } from "@nestjs/mongoose";
 import { forwardRef } from "@nestjs/common";
@@ -71,6 +71,15 @@ describe("UserController", () => {
     });
 
     expect(await controller.retrieve(retrievedUser._id)).toEqual(retrievedUser);
+  });
+
+  it("should be retrieved", async () => {
+    const currentUser = await controller.userRepo.findOne<UserFindDto>({
+      name: { $regex: "Majid" },
+    });
+    await controller.delete(currentUser._id);
+    const deletedUser = await controller.userRepo.findById(currentUser._id);
+    expect(deletedUser.status).toEqual(ActivationStatus.DELETED);
   });
 
   afterAll(async () => {

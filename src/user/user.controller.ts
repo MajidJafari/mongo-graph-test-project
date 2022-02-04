@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   Param,
@@ -68,5 +69,17 @@ export class UserController {
     id,
   ) {
     return await this.userRepo.findById(id);
+  }
+
+  @Delete("/:id")
+  @HttpCode(204)
+  async delete(
+    @Param()
+    id,
+  ) {
+    throw new NotImplemented({
+      className: this.constructor.name,
+      methodName: "delete",
+    });
   }
 }
