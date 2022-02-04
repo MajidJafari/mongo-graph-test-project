@@ -61,7 +61,7 @@ describe("UserController", () => {
       ).name,
     ).toEqual(updatedUserName);
 
-    const updatedUser = await controller.userRepo.findById(currentUser.id);
+    const updatedUser = await controller.userRepo.findById(currentUser._id);
     expect(currentUser.name).not.toEqual(updatedUser.name);
   });
 

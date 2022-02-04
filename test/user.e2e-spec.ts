@@ -52,9 +52,9 @@ describe("UserController (e2e)", () => {
         name: "Majid Jafari 3",
       };
       return request(app.getHttpServer())
-        .post("/users/")
+        .put("/users/some-unvalidated-mongo-id")
         .send(updateDto)
-        .expect(200);
+        .expect(422);
     });
   });
 });

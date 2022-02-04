@@ -46,6 +46,8 @@ export class UserController {
     )
     userUpdateDto: UserUpdateDto,
   ): Promise<UserCreateDto> {
-    return await this.userRepo.update<UserUpdateDto>(id, userUpdateDto);
+    return await this.userRepo.update<UserUpdateDto>(id, userUpdateDto, {
+      returnNew: true,
+    });
   }
 }

@@ -32,7 +32,12 @@ export abstract class BaseRepository<T extends EntityDocument<any>> {
   async update<UpdateDto extends Partial<UpdateQuery<T>>>(
     id: string | ObjectId,
     updateDto: UpdateDto,
+    options?: { returnNew: boolean },
   ): Promise<T> {
-    return (await this.model.findByIdAndUpdate(id, updateDto)).toObject() as T;
+    return (
+      await this.model.findByIdAndUpdate(id, updateDto, {
+        returnOriginal: !options?.returnNew,
+      })
+    ).toObject() as T;
   }
 }
