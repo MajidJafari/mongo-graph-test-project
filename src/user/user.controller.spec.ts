@@ -1,13 +1,27 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { UserController } from "./user.controller";
-import { User } from "./schemas/user.schema";
+import { User, UserSchema } from "./schemas/user.schema";
+import { UserTypes } from "../types/global";
+import { UserRepo } from "./repositories/user.repo";
+import { MongooseModule } from "@nestjs/mongoose";
+import { forwardRef } from "@nestjs/common";
+import { StoreModule } from "../store/store.module";
+import { constants } from "../configs/constants";
 
 describe("UserController", () => {
   let controller: UserController;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
+      providers: [UserRepo],
+      imports: [
+        MongooseModule.forRoot(constants.MONGO_DB_URL_TEST),
+        MongooseModule.forFeature([
+          { name: User.name, schema: UserSchema, collection: "users" },
+        ]),
+        forwardRef(() => StoreModule),
+      ],
     }).compile();
 
     controller = module.get<UserController>(UserController);
@@ -18,6 +32,21 @@ describe("UserController", () => {
   });
 
   it("should be created", async () => {
-    expect(await controller.create()).toBeInstanceOf(User);
+    const userName = "Majid Jafari";
+    const createdUser = await (async () =>
+      await controller.create({
+        name: userName,
+        type: UserTypes.Employee,
+        store: "61fad128dedc69e21f645872",
+      }))();
+
+    expect(createdUser).toHaveProperty("_id");
+    expect(
+      await controller.userRepo.findOne({ name: { $regex: "Majid" } }),
+    ).toEqual(createdUser);
+  });
+
+  afterAll(async () => {
+    await controller.userRepo.deleteMany({});
   });
 });

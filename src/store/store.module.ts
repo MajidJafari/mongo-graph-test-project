@@ -1,7 +1,8 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { Store, StoreSchema } from "./schemas/store.schema";
 import { StoreRepo } from "./repositories/store.repo";
+import { UserModule } from "../user/user.module";
 
 @Module({
   providers: [StoreRepo],
@@ -9,6 +10,7 @@ import { StoreRepo } from "./repositories/store.repo";
     MongooseModule.forFeature([
       { name: Store.name, schema: StoreSchema, collection: "stores" },
     ]),
+    forwardRef(() => UserModule),
   ],
 })
 export class StoreModule {}
