@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  UseInterceptors,
 } from "@nestjs/common";
 import { UserCreateDto } from "./dto/user.create.dto";
 import { UserRepo } from "./repositories/user.repo";
@@ -14,7 +15,7 @@ import { GenericValidatorPipe } from "../components/generic-validator-pipe";
 import { ActivationStatus, UserTypes } from "../types/global";
 import { Joi } from "../lib/custom-joi";
 import { UserUpdateDto } from "./dto/user.update.dto";
-import { NotImplemented } from "../exceptions/not-implemented";
+import { NotFoundIfNull } from "../interceptors/not-found-if-null";
 
 const getIdValidationSchema = () =>
   new GenericValidatorPipe({
@@ -45,6 +46,7 @@ export class UserController {
 
   @Put("/:id")
   @HttpCode(200)
+  @UseInterceptors(NotFoundIfNull)
   async update(
     @Param(getIdValidationSchema())
     { id },
@@ -64,6 +66,7 @@ export class UserController {
 
   @Get("/:id")
   @HttpCode(200)
+  @UseInterceptors(NotFoundIfNull)
   async retrieve(
     @Param(getIdValidationSchema())
     { id },
@@ -73,10 +76,14 @@ export class UserController {
 
   @Delete("/:id")
   @HttpCode(204)
+  @UseInterceptors(NotFoundIfNull)
   async delete(
     @Param(getIdValidationSchema())
     { id },
   ) {
-    await this.userRepo.update(id, { status: ActivationStatus.DELETED });
+    return await this.userRepo.updateOne(
+      { _id: id, status: ActivationStatus.Active },
+      { status: ActivationStatus.DELETED },
+    );
   }
 }

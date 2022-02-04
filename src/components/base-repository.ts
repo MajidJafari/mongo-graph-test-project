@@ -40,4 +40,16 @@ export abstract class BaseRepository<T extends EntityDocument<any>> {
       })
     )?.toObject() as T;
   }
+
+  async updateOne<UpdateDto>(
+    filter: Partial<FilterQuery<T>>,
+    updateDto: Partial<UpdateQuery<T>>,
+    options?: { returnNew: boolean },
+  ): Promise<T> {
+    return (
+      await this.model.findOneAndUpdate(filter, updateDto, {
+        returnOriginal: !options?.returnNew,
+      })
+    )?.toObject() as T;
+  }
 }

@@ -26,6 +26,8 @@ describe("UserController", () => {
     }).compile();
 
     controller = module.get<UserController>(UserController);
+
+    await controller.userRepo.deleteMany({});
   });
 
   it("should be defined", () => {
@@ -80,9 +82,5 @@ describe("UserController", () => {
     await controller.delete(currentUser._id);
     const deletedUser = await controller.userRepo.findById(currentUser._id);
     expect(deletedUser.status).toEqual(ActivationStatus.DELETED);
-  });
-
-  afterAll(async () => {
-    await controller.userRepo.deleteMany({});
   });
 });

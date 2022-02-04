@@ -31,7 +31,7 @@ export class GenericValidatorPipe<Dto> implements PipeTransform<Dto, Dto> {
         ...previousValue,
         [currentValue]: validDto[currentValue],
       }),
-      {},
+      input,
     ) as Dto;
   }
 }
