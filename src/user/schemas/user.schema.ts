@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { Schema as MongooseSchema } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { EntityDocument, UserTypes } from "../../types/global";
 import { BaseModel } from "../../components/base-model";
@@ -13,7 +13,7 @@ export class User extends BaseModel {
   @Prop({ required: true, index: true })
   type: UserTypes;
 
-  @Prop({ index: true, type: Types.ObjectId })
+  @Prop({ index: true, type: MongooseSchema.Types.ObjectId })
   store: string;
 }
 
