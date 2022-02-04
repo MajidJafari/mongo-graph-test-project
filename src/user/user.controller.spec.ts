@@ -55,7 +55,7 @@ describe("UserController", () => {
 
     expect(
       (
-        await controller.update({
+        await controller.update(currentUser._id, {
           name: updatedUserName,
         })
       ).name,

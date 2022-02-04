@@ -1,10 +1,9 @@
-import { Body, Controller, HttpCode, Post, Put } from "@nestjs/common";
+import { Body, Controller, HttpCode, Param, Post, Put } from "@nestjs/common";
 import { UserCreateDto } from "./dto/user.create.dto";
 import { UserRepo } from "./repositories/user.repo";
 import { GenericValidatorPipe } from "../components/generic-validator-pipe";
 import { ActivationStatus, UserTypes } from "../types/global";
 import { Joi } from "../lib/custom-joi";
-import { NotImplemented } from "../exceptions/not-implemented";
 import { UserUpdateDto } from "./dto/user.update.dto";
 
 @Controller("users")
@@ -32,6 +31,12 @@ export class UserController {
   @Put("/:id")
   @HttpCode(200)
   async update(
+    @Param(
+      new GenericValidatorPipe({
+        id: Joi.mongoId().required(),
+      }),
+    )
+    id,
     @Body(
       new GenericValidatorPipe<UserUpdateDto>({
         name: Joi.string().min(3).max(32),
@@ -41,9 +46,6 @@ export class UserController {
     )
     userUpdateDto: UserUpdateDto,
   ): Promise<UserCreateDto> {
-    throw new NotImplemented({
-      className: this.constructor.name,
-      methodName: "update",
-    });
+    return await this.userRepo.update<UserUpdateDto>(id, userUpdateDto);
   }
 }

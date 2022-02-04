@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { FilterQuery, Model } from "mongoose";
+import { FilterQuery, Model, UpdateQuery } from "mongoose";
 import { EntityDocument } from "../types/global";
 import { ObjectId } from "bson";
 
@@ -27,5 +27,12 @@ export abstract class BaseRepository<T extends EntityDocument<any>> {
 
   async findById(id: string | ObjectId): Promise<T> {
     return (await this.model.findById(id)).toObject() as T;
+  }
+
+  async update<UpdateDto extends Partial<UpdateQuery<T>>>(
+    id: string | ObjectId,
+    updateDto: UpdateDto,
+  ): Promise<T> {
+    return (await this.model.findByIdAndUpdate(id, updateDto)).toObject() as T;
   }
 }
