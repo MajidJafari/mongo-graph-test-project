@@ -34,8 +34,8 @@ describe("UserController (e2e)", () => {
   it("should throw an error for wrong data input", async () => {
     const createDto = {
       name: "Majid Jafari 2",
-      type: "WorkPlus Employee" as any,
-      store: "61fad128dedc69e21f645872",
+      type: UserTypes.Employee,
+      store: "some-unvalidated-mongo-id",
     };
     return request(app.getHttpServer())
       .post("/users/")
