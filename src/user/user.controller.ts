@@ -1,10 +1,19 @@
-import { Body, Controller, HttpCode, Param, Post, Put } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Put,
+} from "@nestjs/common";
 import { UserCreateDto } from "./dto/user.create.dto";
 import { UserRepo } from "./repositories/user.repo";
 import { GenericValidatorPipe } from "../components/generic-validator-pipe";
 import { ActivationStatus, UserTypes } from "../types/global";
 import { Joi } from "../lib/custom-joi";
 import { UserUpdateDto } from "./dto/user.update.dto";
+import { NotImplemented } from "../exceptions/not-implemented";
 
 @Controller("users")
 export class UserController {
@@ -48,6 +57,18 @@ export class UserController {
   ): Promise<UserCreateDto> {
     return await this.userRepo.update<UserUpdateDto>(id, userUpdateDto, {
       returnNew: true,
+    });
+  }
+
+  @Get("/:id")
+  @HttpCode(200)
+  async retrieve(
+    @Param()
+    id,
+  ) {
+    throw new NotImplemented({
+      className: this.constructor.name,
+      methodName: "get",
     });
   }
 }

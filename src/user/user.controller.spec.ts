@@ -65,6 +65,14 @@ describe("UserController", () => {
     expect(currentUser.name).not.toEqual(updatedUser.name);
   });
 
+  it("should be retrieved", async () => {
+    const retrievedUser = await controller.userRepo.findOne<UserFindDto>({
+      name: { $regex: "Majid" },
+    });
+
+    expect(await controller.retrieve(retrievedUser._id)).toEqual(retrievedUser);
+  });
+
   afterAll(async () => {
     await controller.userRepo.deleteMany({});
   });

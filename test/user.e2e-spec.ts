@@ -21,20 +21,8 @@ describe("UserController (e2e)", () => {
   });
 
   describe("/users (POST)", () => {
-    it("should create user", () => {
-      const createDto: UserCreateDto = {
-        name: "Majid Jafari",
-        type: UserTypes.Employee,
-        store: "61fad128dedc69e21f645872",
-      };
-      return request(app.getHttpServer())
-        .post("/users/")
-        .send(createDto)
-        .expect(201);
-    });
-
     it("should throw an error for wrong data input", async () => {
-      const createDto = {
+      const createDto: UserCreateDto = {
         name: "Majid Jafari 2",
         type: UserTypes.Employee,
         store: "some-unvalidated-mongo-id",
@@ -47,13 +35,22 @@ describe("UserController (e2e)", () => {
   });
 
   describe("/users/:id (PUT)", () => {
-    it("should update user successfully", () => {
+    it("should throw an error for wrong data input", () => {
       const updateDto: UserUpdateDto = {
         name: "Majid Jafari 3",
       };
       return request(app.getHttpServer())
         .put("/users/some-unvalidated-mongo-id")
         .send(updateDto)
+        .expect(422);
+    });
+  });
+
+  describe("/users/:id (GET)", () => {
+    it("should throw an error for wrong data input", () => {
+      return request(app.getHttpServer())
+        .get("/users/some-unvalidated-mongo-id")
+        .send()
         .expect(422);
     });
   });
