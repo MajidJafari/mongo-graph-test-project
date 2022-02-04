@@ -15,6 +15,11 @@ import { Joi } from "../lib/custom-joi";
 import { UserUpdateDto } from "./dto/user.update.dto";
 import { NotImplemented } from "../exceptions/not-implemented";
 
+const getIdValidationSchema = () =>
+  new GenericValidatorPipe({
+    id: Joi.mongoId().required(),
+  });
+
 @Controller("users")
 export class UserController {
   constructor(readonly userRepo: UserRepo) {}
@@ -40,11 +45,7 @@ export class UserController {
   @Put("/:id")
   @HttpCode(200)
   async update(
-    @Param(
-      new GenericValidatorPipe({
-        id: Joi.mongoId().required(),
-      }),
-    )
+    @Param(getIdValidationSchema())
     id,
     @Body(
       new GenericValidatorPipe<UserUpdateDto>({
@@ -63,12 +64,9 @@ export class UserController {
   @Get("/:id")
   @HttpCode(200)
   async retrieve(
-    @Param()
+    @Param(getIdValidationSchema())
     id,
   ) {
-    throw new NotImplemented({
-      className: this.constructor.name,
-      methodName: "get",
-    });
+    return await this.userRepo.findById(id);
   }
 }
