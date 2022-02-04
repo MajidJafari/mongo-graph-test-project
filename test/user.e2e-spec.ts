@@ -30,4 +30,16 @@ describe("UserController (e2e)", () => {
       .send(createDto)
       .expect(201);
   });
+
+  it("should throw an error for wrong data input", async () => {
+    const createDto = {
+      name: "Majid Jafari 2",
+      type: "WorkPlus Employee" as any,
+      store: "61fad128dedc69e21f645872",
+    };
+    return request(app.getHttpServer())
+      .post("/users/")
+      .send(createDto)
+      .expect(422);
+  });
 });
