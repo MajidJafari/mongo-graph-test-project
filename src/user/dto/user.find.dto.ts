@@ -1,3 +1,3 @@
-export class UserDeleteDto {
+export class UserFindDto {
   name: { $regex: string };
 }

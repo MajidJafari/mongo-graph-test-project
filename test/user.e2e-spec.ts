@@ -6,6 +6,7 @@ import { UserCreateDto } from "../src/user/dto/user.create.dto";
 import { UserTypes } from "../src/types/global";
 import { MongooseModule } from "@nestjs/mongoose";
 import { constants } from "../src/configs/constants";
+import { UserUpdateDto } from "../src/user/dto/user.update.dto";
 
 describe("UserController (e2e)", () => {
   let app: INestApplication;
@@ -19,27 +20,41 @@ describe("UserController (e2e)", () => {
     await app.init();
   });
 
-  it("/users (POST)", () => {
-    const createDto: UserCreateDto = {
-      name: "Majid Jafari",
-      type: UserTypes.Employee,
-      store: "61fad128dedc69e21f645872",
-    };
-    return request(app.getHttpServer())
-      .post("/users/")
-      .send(createDto)
-      .expect(201);
+  describe("/users (POST)", () => {
+    it("should create user", () => {
+      const createDto: UserCreateDto = {
+        name: "Majid Jafari",
+        type: UserTypes.Employee,
+        store: "61fad128dedc69e21f645872",
+      };
+      return request(app.getHttpServer())
+        .post("/users/")
+        .send(createDto)
+        .expect(201);
+    });
+
+    it("should throw an error for wrong data input", async () => {
+      const createDto = {
+        name: "Majid Jafari 2",
+        type: UserTypes.Employee,
+        store: "some-unvalidated-mongo-id",
+      };
+      return request(app.getHttpServer())
+        .post("/users/")
+        .send(createDto)
+        .expect(422);
+    });
   });
 
-  it("should throw an error for wrong data input", async () => {
-    const createDto = {
-      name: "Majid Jafari 2",
-      type: UserTypes.Employee,
-      store: "some-unvalidated-mongo-id",
-    };
-    return request(app.getHttpServer())
-      .post("/users/")
-      .send(createDto)
-      .expect(422);
+  describe("/users/:id (PUT)", () => {
+    it("should update user successfully", () => {
+      const updateDto: UserUpdateDto = {
+        name: "Majid Jafari 3",
+      };
+      return request(app.getHttpServer())
+        .post("/users/")
+        .send(updateDto)
+        .expect(200);
+    });
   });
 });

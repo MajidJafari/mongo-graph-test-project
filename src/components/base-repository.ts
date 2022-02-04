@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { FilterQuery, Model } from "mongoose";
 import { EntityDocument } from "../types/global";
+import { ObjectId } from "bson";
 
 @Injectable()
 export abstract class BaseRepository<T extends EntityDocument<any>> {
@@ -22,5 +23,9 @@ export abstract class BaseRepository<T extends EntityDocument<any>> {
     findDto: FindDto,
   ): Promise<T> {
     return (await this.model.findOne(findDto)).toObject() as T;
+  }
+
+  async findById(id: string | ObjectId): Promise<T> {
+    return (await this.model.findById(id)).toObject() as T;
   }
 }

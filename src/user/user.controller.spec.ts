@@ -7,6 +7,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { forwardRef } from "@nestjs/common";
 import { StoreModule } from "../store/store.module";
 import { constants } from "../configs/constants";
+import { UserFindDto } from "./dto/user.find.dto";
 
 describe("UserController", () => {
   let controller: UserController;
@@ -44,6 +45,24 @@ describe("UserController", () => {
     expect(
       await controller.userRepo.findOne({ name: { $regex: "Majid" } }),
     ).toEqual(createdUser);
+  });
+
+  it("should be updated", async () => {
+    const updatedUserName = "Majid Jafari 3";
+    const currentUser = await controller.userRepo.findOne<UserFindDto>({
+      name: { $regex: "Majid" },
+    });
+
+    expect(
+      (
+        await controller.update({
+          name: updatedUserName,
+        })
+      ).name,
+    ).toEqual(updatedUserName);
+
+    const updatedUser = await controller.userRepo.findById(currentUser.id);
+    expect(currentUser.name).not.toEqual(updatedUser.name);
   });
 
   afterAll(async () => {
