@@ -1,7 +1,8 @@
 import { model, connect } from "mongoose";
 import { IStore, Store, StoreSchema } from "./store/schemas/store.schema";
+import { constants } from "./configs/constants";
 
-connect("mongodb://localhost/grocery-store")
+connect(process.argv[2] || constants.MONGO_DB_URL)
   .then(() => {
     const storeModel = model<IStore>(Store.name, StoreSchema, "stores");
     const storeRecursively = async (store: object, storeId: string) => {
@@ -66,12 +67,12 @@ connect("mongodb://localhost/grocery-store")
         root._id,
       );
       console.log("--------------------------------------------");
-      process.exit(1);
+      process.exit(0);
     })();
   })
   .catch((err: Error) => {
     console.log(
       "MongoDB connection error. Please make sure MongoDB is running. " + err,
     );
-    // process.exit();
+    process.exit(1);
   });
