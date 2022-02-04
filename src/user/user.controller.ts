@@ -47,7 +47,7 @@ export class UserController {
   @HttpCode(200)
   async update(
     @Param(getIdValidationSchema())
-    id,
+    { id },
     @Body(
       new GenericValidatorPipe<UserUpdateDto>({
         name: Joi.string().min(3).max(32),
@@ -66,7 +66,7 @@ export class UserController {
   @HttpCode(200)
   async retrieve(
     @Param(getIdValidationSchema())
-    id,
+    { id },
   ) {
     return await this.userRepo.findById(id);
   }
@@ -75,7 +75,7 @@ export class UserController {
   @HttpCode(204)
   async delete(
     @Param(getIdValidationSchema())
-    id,
+    { id },
   ) {
     await this.userRepo.update(id, { status: ActivationStatus.DELETED });
   }

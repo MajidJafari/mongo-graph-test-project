@@ -22,11 +22,11 @@ export abstract class BaseRepository<T extends EntityDocument<any>> {
   async findOne<FindDto extends Partial<FilterQuery<T>>>(
     findDto: FindDto,
   ): Promise<T> {
-    return (await this.model.findOne(findDto)).toObject() as T;
+    return (await this.model.findOne(findDto))?.toObject() as T;
   }
 
   async findById(id: string | ObjectId): Promise<T> {
-    return (await this.model.findById(id)).toObject() as T;
+    return (await this.model.findById(id))?.toObject() as T;
   }
 
   async update<UpdateDto extends Partial<UpdateQuery<T>>>(
@@ -38,6 +38,6 @@ export abstract class BaseRepository<T extends EntityDocument<any>> {
       await this.model.findByIdAndUpdate(id, updateDto, {
         returnOriginal: !options?.returnNew,
       })
-    ).toObject() as T;
+    )?.toObject() as T;
   }
 }
