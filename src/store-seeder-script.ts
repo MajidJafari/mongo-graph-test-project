@@ -1,34 +1,22 @@
-import { model, connect } from "mongoose";
+import { model, connect, Model } from "mongoose";
 import { IStore, Store, StoreSchema } from "./store/schemas/store.schema";
 import { constants } from "./configs/constants";
+import { IUser, User, UserSchema } from "./user/schemas/user.schema";
+import {
+  adjectives,
+  colors,
+  starWars,
+  uniqueNamesGenerator,
+} from "unique-names-generator";
+import { ActivationStatus, UserTypes } from "./types/global";
+
+let storeModel: Model<IStore>;
+let userModel: Model<IUser>;
 
 connect(process.argv[2] || constants.MONGO_DB_URL)
   .then(() => {
-    const storeModel = model<IStore>(Store.name, StoreSchema, "stores");
-    const storeRecursively = async (store: object, storeId: string) => {
-      const childStoreNames = Array.isArray(store) ? store : Object.keys(store);
-
-      const childStores = await Promise.all(
-        childStoreNames.map(
-          async (name) =>
-            await new storeModel({
-              name,
-              parentStore: storeId,
-              createdAt: new Date(),
-            }).save(),
-        ),
-      );
-
-      console.log(childStoreNames.join("\n"));
-
-      await Promise.all(
-        childStores
-          .filter(({ name }) => store[name])
-          .map(
-            async ({ _id, name }) => await storeRecursively(store[name], _id),
-          ),
-      );
-    };
+    storeModel = model<IStore>(Store.name, StoreSchema, "stores");
+    userModel = model<IUser>(User.name, UserSchema, "users");
 
     (async () => {
       await storeModel.deleteMany({}).exec();
@@ -38,8 +26,11 @@ connect(process.argv[2] || constants.MONGO_DB_URL)
         createdAt: new Date(),
       }).save();
 
-      console.log("-------------Stores Added Successfully-----------------");
-      console.log("Srbija");
+      console.log(
+        "-------------The Following Stores Added Successfully-----------------",
+      );
+
+      await addUsers([root]);
 
       await storeRecursively(
         {
@@ -76,3 +67,53 @@ connect(process.argv[2] || constants.MONGO_DB_URL)
     );
     process.exit(1);
   });
+
+const storeRecursively = async (store: object, storeId: string) => {
+  const childStoreNames = Array.isArray(store) ? store : Object.keys(store);
+
+  const childStores = await Promise.all(
+    childStoreNames.map(
+      async (name) =>
+        await new storeModel({
+          name,
+          parentStore: storeId,
+          createdAt: new Date(),
+        }).save(),
+    ),
+  );
+
+  await addUsers(childStores);
+
+  await Promise.all(
+    childStores
+      .filter(({ name }) => store[name])
+      .map(async ({ _id, name }) => await storeRecursively(store[name], _id)),
+  );
+};
+
+const addUsers = async (childStores: IStore[]) => {
+  for (let i = 0; i < childStores.length; i++) {
+    const childStore = childStores[i];
+    const randomUserNumbers = Math.floor(Math.random() * 5) + 1;
+    const users = await userModel.insertMany(
+      [...Array(randomUserNumbers).keys()].map(() => ({
+        store: childStore._id,
+        name: uniqueNamesGenerator({
+          dictionaries: [adjectives, colors, starWars],
+        }),
+        createdAt: new Date(),
+        status: ActivationStatus.Active,
+        type: Object.values(UserTypes)[Math.floor(Math.random() * 10) % 2],
+      })),
+    );
+    console.log("=============================================");
+    console.log("Store: ", childStore.name, "\n");
+    console.log("Users:");
+    console.log(
+      users
+        .map((user, index) => `${index + 1}.${user.name} => ${user.type}`)
+        .join("\n"),
+    );
+    console.log("=============================================");
+  }
+};

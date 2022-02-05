@@ -11,7 +11,7 @@ import { UserFindDto } from "./dto/user.find.dto";
 
 describe("UserController", () => {
   let controller: UserController;
-
+  const dummyStoreId = "61fad128dedc69e21f645872";
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UserController],
@@ -27,7 +27,7 @@ describe("UserController", () => {
 
     controller = module.get<UserController>(UserController);
 
-    await controller.userRepo.deleteMany({});
+    await controller.userRepo.deleteMany({ store: dummyStoreId });
   });
 
   it("should be defined", () => {
@@ -40,7 +40,7 @@ describe("UserController", () => {
       await controller.create({
         name: userName,
         type: UserTypes.Employee,
-        store: "61fad128dedc69e21f645872",
+        store: dummyStoreId,
       }))();
 
     expect(createdUser).toHaveProperty("_id");
@@ -75,7 +75,7 @@ describe("UserController", () => {
     expect(await controller.retrieve(retrievedUser._id)).toEqual(retrievedUser);
   });
 
-  it("should be retrieved", async () => {
+  it("should be deleted", async () => {
     const currentUser = await controller.userRepo.findOne<UserFindDto>({
       name: { $regex: "Majid" },
     });
