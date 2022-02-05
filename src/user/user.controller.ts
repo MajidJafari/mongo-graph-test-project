@@ -16,11 +16,7 @@ import { ActivationStatus, UserTypes } from "../types/global";
 import { Joi } from "../lib/custom-joi";
 import { UserUpdateDto } from "./dto/user.update.dto";
 import { NotFoundIfNull } from "../interceptors/not-found-if-null";
-
-const getIdValidationSchema = () =>
-  new GenericValidatorPipe({
-    id: Joi.mongoId().required(),
-  });
+import { getIdValidationSchema } from "../utils/validation-schemas";
 
 @Controller("users")
 export class UserController {
