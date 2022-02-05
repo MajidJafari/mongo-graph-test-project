@@ -13,7 +13,7 @@ export class User extends BaseModel {
   @Prop({ required: true, index: true, enum: Object.values(UserTypes) })
   type: UserTypes;
 
-  @Prop({ index: true, type: MongooseSchema.Types.ObjectId })
+  @Prop({ index: true, required: true, type: MongooseSchema.Types.ObjectId })
   store: string;
 }
 
