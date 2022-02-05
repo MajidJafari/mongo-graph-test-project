@@ -7,8 +7,9 @@ export const getIdValidationSchema = () =>
     id: Joi.mongoId().required(),
   });
 
-export const getUserTypeVlidationSchema = () =>
+export const getUserByTypeValidationSchema = () =>
   new GenericValidatorPipe({
+    id: Joi.mongoId().required(),
     type: Joi.string()
       .valid(...Object.values(UserTypes))
       .required(),

@@ -52,4 +52,12 @@ export abstract class BaseRepository<T extends EntityDocument<any>> {
       })
     )?.toObject() as T;
   }
+
+  async findAll<FindDto extends Partial<FilterQuery<T>>>(
+    findDto: FindDto,
+  ): Promise<T[]> {
+    return (await this.model.find(findDto))?.map((item) =>
+      item.toObject(),
+    ) as T[];
+  }
 }

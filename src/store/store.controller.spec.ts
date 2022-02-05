@@ -38,18 +38,22 @@ describe("StoreController", () => {
     let employees = {} as { data: IUser[] };
     it("should retrieve an array of users", async () => {
       const store = await controller.storeRepo.findOne({});
-      employees = await controller.getUsers(store._id, UserTypes.Employee);
+      employees = await controller.getUsers({
+        id: store._id,
+        type: UserTypes.Employee,
+      });
+
       expect(employees).toHaveProperty("data");
       expect(employees.data).toBeInstanceOf(Array);
+    });
 
-      it("should not contain any manager", () => {
-        const isThereManager = employees.data.reduce(
-          (previousValue, currentValue) =>
-            previousValue || currentValue.type === UserTypes.Manager,
-          false,
-        );
-        expect(isThereManager).toBe(false);
-      });
+    it("should not contain any manager", () => {
+      const isThereManager = employees.data.reduce(
+        (previousValue, currentValue) =>
+          previousValue || currentValue.type === UserTypes.Manager,
+        false,
+      );
+      expect(isThereManager).toBe(false);
     });
   });
 });
