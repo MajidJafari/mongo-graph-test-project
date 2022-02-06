@@ -6,8 +6,9 @@ import { IUser } from "../user/schemas/user.schema";
 import { forwardRef } from "@nestjs/common";
 import { StoreRepo } from "./repositories/store.repo";
 import { UserModule } from "../user/user.module";
-import { Store, StoreSchema } from "./schemas/store.schema";
+import { IStore, Store, StoreSchema } from "./schemas/store.schema";
 import { UserTypes } from "../types/global";
+import { ObjectId } from "bson";
 
 describe("StoreController", () => {
   let controller: StoreController;
@@ -33,7 +34,7 @@ describe("StoreController", () => {
   });
 
   describe("Retrieve All Employees of a Node", () => {
-    let employees = {} as { data: IUser[] };
+    let employees: { data: IUser[] };
     it("should retrieve an array of users", async () => {
       const store = await controller.storeRepo.findOne({});
       employees = await controller.getUsers({
@@ -57,6 +58,73 @@ describe("StoreController", () => {
         false,
       );
       expect(isThereManager).toBe(false);
+    });
+
+    describe("Retrieve All Employees of a Node", () => {
+      let store: IStore & { childStores: { _id: ObjectId[] }[] };
+      let employees: { data: { ownUsers: IUser[]; descendantUsers: IUser[] } };
+
+      it("should contain own users", async () => {
+        store = (
+          await controller.storeRepo.aggregate().lookup({
+            from: "stores",
+            localField: "_id",
+            foreignField: "parentStore",
+            pipeline: [
+              {
+                $match: {
+                  status: "ACTIVE",
+                },
+              },
+              {
+                $project: {
+                  _id: 1,
+                },
+              },
+            ],
+            as: "childStores",
+          })
+        )[0];
+
+        employees = await controller.getUsers<true>(
+          {
+            id: store._id,
+            type: UserTypes.Employee,
+          },
+          {
+            includeDescendants: true,
+          },
+        );
+
+        expect(employees).toHaveProperty("data");
+        expect(employees.data).toBeInstanceOf(Object);
+
+        expect(employees.data).toHaveProperty("ownUsers");
+        expect(employees.data.ownUsers).toBeInstanceOf(Array);
+        if (employees.data.ownUsers[0]) {
+          expect(employees.data.ownUsers[0]).toHaveProperty("store");
+          expect(employees.data.ownUsers[0].store).toEqual(
+            store._id.toString(),
+          );
+        }
+      });
+
+      it("should contain descendant users", () => {
+        expect(employees.data).toHaveProperty("descendantUsers");
+        expect(employees.data.descendantUsers).toBeInstanceOf(Array);
+        if (employees.data.descendantUsers[0]) {
+          expect(employees.data.descendantUsers[0]).toHaveProperty("store");
+          expect(
+            store.childStores
+              .map((item) => item._id.toString())
+              .includes(employees.data.descendantUsers[0].store),
+          ).toBe(true);
+          expect(employees.data.descendantUsers[0]).toHaveProperty("type");
+          expect(employees.data.descendantUsers[0].type).toEqual(
+            UserTypes.Employee,
+          );
+        }
+      });
     });
   });
 });
