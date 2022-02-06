@@ -68,6 +68,7 @@ export class StoreRepo extends BaseRepository<IStore> {
           {
             $match: {
               type,
+              status: ActivationStatus.Active,
             },
           },
         ],

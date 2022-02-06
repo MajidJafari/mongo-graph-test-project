@@ -5,6 +5,7 @@ import {
   Param,
   Query,
   UseGuards,
+  UseInterceptors,
 } from "@nestjs/common";
 import { StoreRepo } from "./repositories/store.repo";
 import { getUserByTypeValidationSchema } from "../utils/validation-schemas";
@@ -13,8 +14,10 @@ import { GenericValidatorPipe } from "../components/generic-validator-pipe";
 import * as Joi from "joi";
 import { UserTypes } from "../types/global";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { Authorization } from "../interceptors/authurization";
 
 @UseGuards(JwtAuthGuard)
+@UseInterceptors(Authorization)
 @Controller("stores")
 export class StoreController {
   constructor(readonly storeRepo: StoreRepo) {}

@@ -13,6 +13,7 @@ import { StoreController } from "./store.controller";
     ]),
     forwardRef(() => UserModule),
   ],
+  exports: [StoreRepo],
   controllers: [StoreController],
 })
 export class StoreModule {}

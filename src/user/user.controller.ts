@@ -19,8 +19,10 @@ import { UserUpdateDto } from "./dto/user.update.dto";
 import { NotFoundIfNull } from "../interceptors/not-found-if-null";
 import { getIdValidationSchema } from "../utils/validation-schemas";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
+import { Authorization } from "../interceptors/authurization";
 
 @UseGuards(JwtAuthGuard)
+@UseInterceptors(Authorization)
 @Controller("users")
 export class UserController {
   constructor(readonly userRepo: UserRepo) {}
