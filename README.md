@@ -24,50 +24,72 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Test project utilizing Mongo Graph.
 
 ## Installation
 
 ```bash
-$ npm install
+$ npm i -g yarn @nest/cli
+$ yarn
 ```
+
+## Notes before running the app
+
+Set your constant config in the `src/configs/constants.ts` file. Please note the mongo URL string you enter here, should be the one you will enter must be the same as `<YOUR_MONGODB_URL_STRING>` in running the seeder.
+
 
 ## Running the app
 
 ```bash
 # development
-$ npm run start
+$ yarn start
 
 # watch mode
-$ npm run start:dev
+$ yarn start:dev
 
 # production mode
-$ npm run start:prod
+$ yarn start:prod
+
+# initialize the DB with necessary data
+$ node dist/store-seeder-script.js <YOUR_MONGODB_URL_STRING>
 ```
+
+
 
 ## Test
 
 ```bash
 # unit tests
-$ npm run test
+$ yarn test
 
 # e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+$ yarn test:e2e
 ```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
 ## License
 
-Nest is [MIT licensed](LICENSE).
+[MIT licensed](LICENSE).
+
+>## Notice
+
+- I added `status` field to soft-delete entities, so I don't remove them from DB.
+- I aggregate user API with different type of `MANAGER` and `EMPLOYEE` in one API as I think it makes sense to do so because they are different in only `type` query filter.
+- I could reference the child stores in `store` model but I preferred to save `parenetStore` as the project could grow, and it is not efficient to save let’s say for example `50` entries as `childStore` for each `store.`
+- I used `bcryptjs` for hashing `password`s for the sake of simplicity, but in production projects, we should use `bcrypt` as it uses `C` under the hood and is almost `100` times faster than `bcryptjs` which uses `JavaScript` for the same tasks.
+
+- I used the `name` as `username` and `password` of the users in the `seeder script` for the sake of brevity.
+- I used the DB properties as inputs and outputs for the sake of simplicity, but in the production project, I prefer `snake_case_keys` for request and response and `camelCase` for database schema.
+- Right now the `refreshToken` field of the user model is useless, I would add another API to get the same `accessToken` as its response with `refreshToken` as its request to provide a better DX for clients.
+- The `Authorization` mechanism which uses only one `Interceptor` is so fragile and is completely route-dependent and I could use `CASL` or `casbin` libraries in the production project, considering whether I had the time to implement it.
+
+
+>## Future development
+
+This project can be improved with the following developments:
+
+- [ ]  Replace`bcryptjs` with `bcrypt`.
+- [ ]  Refactor the project so inputs and outputs keys would not be the same as DB fields. For example, replace `_id` with `id` and remove `__v` field using `toJSON` mongoose built-in virtual.
+- [ ]  Add an API that accepts `refresh_token` as its request body and returns the `OAuth2` standard response.
+- [ ]  Overhaul the `Authorization` with `CASL` or `casbin` libraries.
+
+***Thank You :)***
