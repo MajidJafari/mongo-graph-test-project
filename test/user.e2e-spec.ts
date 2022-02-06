@@ -24,6 +24,8 @@ describe("UserController (e2e)", () => {
     it("should throw an error for wrong data input", async () => {
       const createDto: UserCreateDto = {
         name: "Majid Jafari 2",
+        username: "test",
+        password: "test",
         type: UserTypes.Employee,
         store: "some-unvalidated-mongo-id",
       };

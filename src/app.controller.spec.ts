@@ -7,6 +7,8 @@ import { forwardRef } from "@nestjs/common";
 import { StoreModule } from "./store/store.module";
 import { AuthModule } from "./auth/auth.module";
 import { UserModule } from "./user/user.module";
+import { createRequest } from "node-mocks-http";
+import { Auth } from "./types/inputs-outpus";
 
 describe("AppController", () => {
   let appController: AppController;
@@ -30,13 +32,19 @@ describe("AppController", () => {
 
   describe("AUTH", () => {
     it("should return login info", async () => {
-      const { username, password, name } =
-        await appController.authService.userRepo.findOne({});
+      const user = await appController.authService.userRepo.findOne({});
+      const { username, password, name } = user;
 
-      const { loginInfo, userInfo } = await appController.login({
+      const body: Auth.Login.Request.Body = {
         username,
         password,
-      });
+      };
+      const { loginInfo, userInfo } = await appController.login(
+        createRequest({ body, user }) as any,
+        body,
+      );
+
+      console.log({ loginInfo });
 
       expect(userInfo).toHaveProperty("name");
       expect(userInfo.name).toEqual(name);
