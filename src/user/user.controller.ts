@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
 import { UserCreateDto } from "./dto/user.create.dto";
@@ -17,7 +18,9 @@ import { Joi } from "../lib/custom-joi";
 import { UserUpdateDto } from "./dto/user.update.dto";
 import { NotFoundIfNull } from "../interceptors/not-found-if-null";
 import { getIdValidationSchema } from "../utils/validation-schemas";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
+@UseGuards(JwtAuthGuard)
 @Controller("users")
 export class UserController {
   constructor(readonly userRepo: UserRepo) {}

@@ -27,6 +27,10 @@ export class AuthService {
     return null;
   }
 
+  async validateByUserId(id: string) {
+    return this.userRepo.findById(id);
+  }
+
   login(user: IUser): Auth.Login.Response.Body["loginInfo"] {
     const { JWT_EXPIRES_IN } = constants;
     const privateKey = AuthService.privateKey;
@@ -44,5 +48,9 @@ export class AuthService {
 
   static get privateKey() {
     return readFileSync("private.key", "utf8");
+  }
+
+  static get publicKey() {
+    return readFileSync("public.pem", "utf8");
   }
 }

@@ -1,11 +1,20 @@
-import { Controller, Get, HttpCode, Param, Query } from "@nestjs/common";
+import {
+  Controller,
+  Get,
+  HttpCode,
+  Param,
+  Query,
+  UseGuards,
+} from "@nestjs/common";
 import { StoreRepo } from "./repositories/store.repo";
 import { getUserByTypeValidationSchema } from "../utils/validation-schemas";
 import { IUser } from "../user/schemas/user.schema";
 import { GenericValidatorPipe } from "../components/generic-validator-pipe";
 import * as Joi from "joi";
 import { UserTypes } from "../types/global";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
+@UseGuards(JwtAuthGuard)
 @Controller("stores")
 export class StoreController {
   constructor(readonly storeRepo: StoreRepo) {}
