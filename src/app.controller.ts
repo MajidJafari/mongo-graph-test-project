@@ -1,14 +1,16 @@
-import { Body, Controller, Post, Request } from "@nestjs/common";
+import { Body, Controller, Post, Request, UseGuards } from "@nestjs/common";
 import { NotImplemented } from "./exceptions/not-implemented";
 import { GenericValidatorPipe } from "./components/generic-validator-pipe";
 import * as Joi from "joi";
 import { AuthService } from "./auth/auth.service";
 import { Auth } from "./types/inputs-outpus";
+import { LocalAuthGuard } from "./auth/guards/local-auth.guard";
 
 @Controller()
 export class AppController {
   constructor(readonly authService: AuthService) {}
 
+  @UseGuards(LocalAuthGuard)
   @Post("/auth/login")
   async login(
     @Body(
