@@ -43,6 +43,11 @@ describe("StoreController", () => {
 
       expect(employees).toHaveProperty("data");
       expect(employees.data).toBeInstanceOf(Array);
+
+      if (employees.data[0]) {
+        expect(employees.data[0]).toHaveProperty("type");
+        expect(employees.data[0].type).toEqual(UserTypes.Employee);
+      }
     });
 
     it("should not contain any manager", () => {

@@ -2,6 +2,7 @@ import { Controller, Get, HttpCode, Param } from "@nestjs/common";
 import { StoreRepo } from "./repositories/store.repo";
 import { getUserByTypeValidationSchema } from "../utils/validation-schemas";
 import { IUser } from "../user/schemas/user.schema";
+import { UserTypes } from "../types/global";
 
 @Controller("stores")
 export class StoreController {
@@ -11,33 +12,13 @@ export class StoreController {
   @HttpCode(200)
   async getUsers(
     @Param(getUserByTypeValidationSchema())
-    { id, type },
+    params: {
+      id: string;
+      type: UserTypes;
+    },
   ): Promise<{ data: IUser[] }> {
-    return (
-      (
-        await this.storeRepo
-          .aggregate()
-          .match({
-            _id: id,
-          })
-          .lookup({
-            from: "users",
-            localField: "_id",
-            foreignField: "store",
-            pipeline: [
-              {
-                $match: {
-                  type,
-                },
-              },
-            ],
-            as: "users",
-          })
-          .project({
-            _id: 0,
-            data: "$users",
-          })
-      )?.[0] || { data: [] }
-    );
+    const { id, type } = params;
+
+    return { data: (await this.storeRepo.getOwnUsers(id, type))?.users || [] };
   }
 }
