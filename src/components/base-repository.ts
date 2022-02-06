@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { FilterQuery, Model, UpdateQuery } from "mongoose";
+import { FilterQuery, Model, PipelineStage, UpdateQuery } from "mongoose";
 import { EntityDocument } from "../types/global";
 import { ObjectId } from "bson";
 
@@ -59,5 +59,9 @@ export abstract class BaseRepository<T extends EntityDocument<any>> {
     return (await this.model.find(findDto))?.map((item) =>
       item.toObject(),
     ) as T[];
+  }
+
+  aggregate(pipeline?: PipelineStage[]) {
+    return this.model.aggregate(pipeline);
   }
 }

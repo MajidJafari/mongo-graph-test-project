@@ -1,9 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { StoreController } from "./store.controller";
-import { UserRepo } from "../user/repositories/user.repo";
 import { MongooseModule } from "@nestjs/mongoose";
 import { constants } from "../configs/constants";
-import { IUser, User, UserSchema } from "../user/schemas/user.schema";
+import { IUser } from "../user/schemas/user.schema";
 import { forwardRef } from "@nestjs/common";
 import { StoreRepo } from "./repositories/store.repo";
 import { UserModule } from "../user/user.module";
@@ -16,12 +15,11 @@ describe("StoreController", () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [StoreController],
-      providers: [StoreRepo, UserRepo],
+      providers: [StoreRepo],
       imports: [
         MongooseModule.forRoot(constants.MONGO_DB_URL_TEST),
         MongooseModule.forFeature([
           { name: Store.name, schema: StoreSchema, collection: "stores" },
-          { name: User.name, schema: UserSchema, collection: "users" },
         ]),
         forwardRef(() => UserModule),
       ],
