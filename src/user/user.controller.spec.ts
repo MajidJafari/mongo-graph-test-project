@@ -40,6 +40,8 @@ describe("UserController", () => {
       await controller.create({
         name: userName,
         type: UserTypes.Employee,
+        username: userName,
+        password: userName,
         store: dummyStoreId,
       }))();
 

@@ -28,6 +28,8 @@ export class UserController {
     @Body(
       new GenericValidatorPipe<UserCreateDto>({
         name: Joi.string().min(3).max(32).required(),
+        username: Joi.string().min(4).required(),
+        password: Joi.string().min(6).required(),
         type: Joi.string()
           .valid(...Object.values(UserTypes))
           .required(),

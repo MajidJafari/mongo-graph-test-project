@@ -7,7 +7,16 @@ export type IUser = EntityDocument<User>;
 
 @Schema({ collection: "users" })
 export class User extends BaseModel {
-  @Prop({ required: true, unique: true })
+  @Prop({ index: true, unique: true, required: true })
+  username: string;
+
+  @Prop({ required: true })
+  password: string;
+
+  @Prop()
+  refreshToken: string;
+
+  @Prop({ required: true })
   name: string;
 
   @Prop({ required: true, index: true, enum: Object.values(UserTypes) })

@@ -9,6 +9,7 @@ import {
   uniqueNamesGenerator,
 } from "unique-names-generator";
 import { ActivationStatus, UserTypes } from "./types/global";
+import { hashSync } from "bcryptjs";
 
 let storeModel: Model<IStore>;
 let userModel: Model<IUser>;
@@ -19,7 +20,10 @@ connect(process.argv[2] || constants.MONGO_DB_URL)
     userModel = model<IUser>(User.name, UserSchema, "users");
 
     (async () => {
-      await storeModel.deleteMany({}).exec();
+      await Promise.all([
+        storeModel.deleteMany({}).exec(),
+        userModel.deleteMany({}).exec(),
+      ]);
       const root = await new storeModel({
         name: "Srbija",
         parentStore: null,
@@ -96,15 +100,20 @@ const addUsers = async (childStores: IStore[]) => {
     const childStore = childStores[i];
     const randomUserNumbers = Math.floor(Math.random() * 5) + 1;
     const users = await userModel.insertMany(
-      [...Array(randomUserNumbers).keys()].map(() => ({
-        store: childStore._id,
-        name: uniqueNamesGenerator({
+      [...Array(randomUserNumbers).keys()].map(() => {
+        const randomString = uniqueNamesGenerator({
           dictionaries: [adjectives, colors, starWars],
-        }),
-        createdAt: new Date(),
-        status: ActivationStatus.Active,
-        type: Object.values(UserTypes)[Math.floor(Math.random() * 10) % 2],
-      })),
+        });
+        return {
+          store: childStore._id,
+          name: randomString,
+          username: randomString,
+          password: hashSync(randomString),
+          createdAt: new Date(),
+          status: ActivationStatus.Active,
+          type: Object.values(UserTypes)[Math.floor(Math.random() * 10) % 2],
+        };
+      }),
     );
     console.log("=============================================");
     console.log("Store: ", childStore.name, "\n");
