@@ -103,9 +103,7 @@ describe("StoreController", () => {
         expect(employees.data.ownUsers).toBeInstanceOf(Array);
         if (employees.data.ownUsers[0]) {
           expect(employees.data.ownUsers[0]).toHaveProperty("store");
-          expect(employees.data.ownUsers[0].store).toEqual(
-            store._id.toString(),
-          );
+          expect(employees.data.ownUsers[0].store).toEqual(store._id);
         }
       });
 
@@ -117,7 +115,7 @@ describe("StoreController", () => {
           expect(
             store.childStores
               .map((item) => item._id.toString())
-              .includes(employees.data.descendantUsers[0].store),
+              .includes(employees.data.descendantUsers[0].store.toString()),
           ).toBe(true);
           expect(employees.data.descendantUsers[0]).toHaveProperty("type");
           expect(employees.data.descendantUsers[0].type).toEqual(

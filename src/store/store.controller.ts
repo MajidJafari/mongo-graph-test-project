@@ -28,9 +28,21 @@ export class StoreController {
   }> {
     const { id, type } = params;
     const { includeDescendants } = query;
+    const ownUsers = (await this.storeRepo.getOwnUsers(id, type))?.users || [];
 
     return {
-      data: (await this.storeRepo.getOwnUsers(id, type))?.users || [],
+      data: !includeDescendants
+        ? ownUsers
+        : {
+            ownUsers,
+            descendantUsers: (
+              await this.storeRepo.getDescendantUsers(id, type)
+            ).reduce(
+              (previousValue, currentValue) =>
+                previousValue.concat(currentValue.users),
+              [],
+            ),
+          },
     } as any;
   }
 }
