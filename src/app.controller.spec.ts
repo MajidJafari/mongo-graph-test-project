@@ -44,8 +44,6 @@ describe("AppController", () => {
         body,
       );
 
-      console.log({ loginInfo });
-
       expect(userInfo).toHaveProperty("name");
       expect(userInfo.name).toEqual(name);
       expect(loginInfo).toHaveProperty("accessToken");

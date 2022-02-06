@@ -1,4 +1,11 @@
-import { Body, Controller, Post, Request, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  Request,
+  UseGuards,
+} from "@nestjs/common";
 import { GenericValidatorPipe } from "./components/generic-validator-pipe";
 import * as Joi from "joi";
 import { AuthService } from "./auth/auth.service";
@@ -12,6 +19,7 @@ export class AppController {
   constructor(readonly authService: AuthService, private userRepo: UserRepo) {}
 
   @UseGuards(new LocalAuthGuard())
+  @HttpCode(200)
   @Post("/auth/login")
   async login(
     @Request() req: { user: IUser; body: Auth.Login.Request.Body },

@@ -23,7 +23,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
         "username/password is invalid.",
         {
           username,
-          password,
         },
       );
     }

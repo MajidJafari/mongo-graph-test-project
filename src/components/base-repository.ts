@@ -43,7 +43,7 @@ export abstract class BaseRepository<T extends EntityDocument<any>> {
 
   async updateOne<UpdateDto>(
     filter: Partial<FilterQuery<T>>,
-    updateDto: Partial<UpdateQuery<T>>,
+    updateDto: Partial<UpdateQuery<UpdateDto>>,
     options?: { returnNew: boolean },
   ): Promise<T> {
     return (

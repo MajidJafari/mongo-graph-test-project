@@ -7,9 +7,11 @@ import { UserTypes } from "../src/types/global";
 import { MongooseModule } from "@nestjs/mongoose";
 import { constants } from "../src/configs/constants";
 import { UserUpdateDto } from "../src/user/dto/user.update.dto";
+import { testUser } from "../src/configs/test-configs";
 
 describe("UserController (e2e)", () => {
   let app: INestApplication;
+  let accessToken: string;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -18,6 +20,14 @@ describe("UserController (e2e)", () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
+
+    const { body } = await request(app.getHttpServer())
+      .post("/auth/login")
+      .send({
+        username: testUser.username,
+        password: testUser.password,
+      });
+    accessToken = body.loginInfo.accessToken;
   });
 
   describe("/users (POST)", () => {
@@ -31,6 +41,9 @@ describe("UserController (e2e)", () => {
       };
       return request(app.getHttpServer())
         .post("/users/")
+        .set({
+          Authorization: `Bearer ${accessToken}`,
+        })
         .send(createDto)
         .expect(422);
     });
@@ -43,6 +56,9 @@ describe("UserController (e2e)", () => {
       };
       return request(app.getHttpServer())
         .put("/users/some-unvalidated-mongo-id")
+        .set({
+          Authorization: `Bearer ${accessToken}`,
+        })
         .send(updateDto)
         .expect(422);
     });
@@ -53,6 +69,9 @@ describe("UserController (e2e)", () => {
       };
       return request(app.getHttpServer())
         .put("/users/61fad128dedc69e21f645872")
+        .set({
+          Authorization: `Bearer ${accessToken}`,
+        })
         .send(updateDto)
         .expect(404);
     });
@@ -62,6 +81,9 @@ describe("UserController (e2e)", () => {
     it("should throw an error for wrong data input", () => {
       return request(app.getHttpServer())
         .get("/users/some-unvalidated-mongo-id")
+        .set({
+          Authorization: `Bearer ${accessToken}`,
+        })
         .send()
         .expect(422);
     });
@@ -69,6 +91,9 @@ describe("UserController (e2e)", () => {
     it("should throw proper error for non-existent entity", () => {
       return request(app.getHttpServer())
         .get("/users/61fad128dedc69e21f645872")
+        .set({
+          Authorization: `Bearer ${accessToken}`,
+        })
         .send()
         .expect(404);
     });
@@ -78,6 +103,9 @@ describe("UserController (e2e)", () => {
     it("should throw an error for wrong data input", () => {
       return request(app.getHttpServer())
         .delete("/users/some-unvalidated-mongo-id")
+        .set({
+          Authorization: `Bearer ${accessToken}`,
+        })
         .send()
         .expect(422);
     });
@@ -85,6 +113,9 @@ describe("UserController (e2e)", () => {
     it("should throw proper error for non-existent entity", () => {
       return request(app.getHttpServer())
         .delete("/users/61fad128dedc69e21f645872")
+        .set({
+          Authorization: `Bearer ${accessToken}`,
+        })
         .send()
         .expect(404);
     });

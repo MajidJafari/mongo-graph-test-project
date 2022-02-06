@@ -1,4 +1,4 @@
-import { model, connect, Model } from "mongoose";
+import { connect, model, Model } from "mongoose";
 import { IStore, Store, StoreSchema } from "./store/schemas/store.schema";
 import { constants } from "./configs/constants";
 import { IUser, User, UserSchema } from "./user/schemas/user.schema";
@@ -10,6 +10,7 @@ import {
 } from "unique-names-generator";
 import { ActivationStatus, UserTypes } from "./types/global";
 import { hashSync } from "bcryptjs";
+import { testUser } from "./configs/test-configs";
 
 let storeModel: Model<IStore>;
 let userModel: Model<IUser>;
@@ -29,6 +30,12 @@ connect(process.argv[2] || constants.MONGO_DB_URL)
         parentStore: null,
         createdAt: new Date(),
       }).save();
+
+      await userModel.create({
+        ...testUser,
+        store: root._id,
+        password: hashSync(testUser.password),
+      });
 
       console.log(
         "-------------The Following Stores Added Successfully-----------------",

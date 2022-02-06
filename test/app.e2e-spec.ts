@@ -2,10 +2,10 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "./../src/app.module";
+import { testUser } from "../src/configs/test-configs";
 
 describe("AppController (e2e)", () => {
   let app: INestApplication;
-
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -19,9 +19,9 @@ describe("AppController (e2e)", () => {
     return request(app.getHttpServer())
       .post("/auth/login")
       .send({
-        username: "test",
-        password: "test",
+        username: testUser.username,
+        password: testUser.password,
       })
-      .expect(401);
+      .expect(200);
   });
 });
