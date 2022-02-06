@@ -22,27 +22,26 @@ export class StoreController {
     )
     query = { includeDescendants: false },
   ): Promise<{
-    data: IncludeDescendants extends false
-      ? IUser[]
-      : { ownUsers: IUser[]; descendantUsers: IUser[] };
+    data: {
+      ownUsers: IUser[];
+      descendantUsers: IncludeDescendants extends true ? IUser[] : never;
+    };
   }> {
     const { id, type } = params;
     const { includeDescendants } = query;
     const ownUsers = (await this.storeRepo.getOwnUsers(id, type))?.users || [];
 
     return {
-      data: !includeDescendants
-        ? ownUsers
-        : {
-            ownUsers,
-            descendantUsers: (
-              await this.storeRepo.getDescendantUsers(id, type)
-            ).reduce(
+      data: {
+        ownUsers,
+        descendantUsers: (includeDescendants
+          ? (await this.storeRepo.getDescendantUsers(id, type)).reduce<IUser[]>(
               (previousValue, currentValue) =>
                 previousValue.concat(currentValue.users),
               [],
-            ),
-          },
-    } as any;
+            )
+          : undefined) as IncludeDescendants extends true ? IUser[] : never,
+      },
+    };
   }
 }

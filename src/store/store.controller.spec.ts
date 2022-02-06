@@ -34,7 +34,7 @@ describe("StoreController", () => {
   });
 
   describe("Retrieve All Employees of a Node", () => {
-    let employees: { data: IUser[] };
+    let employees: { data: { ownUsers: IUser[] } };
     it("should retrieve an array of users", async () => {
       const store = await controller.storeRepo.findOne({});
       employees = await controller.getUsers({
@@ -43,16 +43,17 @@ describe("StoreController", () => {
       });
 
       expect(employees).toHaveProperty("data");
-      expect(employees.data).toBeInstanceOf(Array);
+      expect(employees.data).toBeInstanceOf(Object);
+      expect(employees.data.ownUsers).toBeInstanceOf(Array);
 
-      if (employees.data[0]) {
-        expect(employees.data[0]).toHaveProperty("type");
-        expect(employees.data[0].type).toEqual(UserTypes.Employee);
+      if (employees.data.ownUsers[0]) {
+        expect(employees.data.ownUsers[0]).toHaveProperty("type");
+        expect(employees.data.ownUsers[0].type).toEqual(UserTypes.Employee);
       }
     });
 
     it("should not contain any manager", () => {
-      const isThereManager = employees.data.reduce(
+      const isThereManager = employees.data.ownUsers.reduce(
         (previousValue, currentValue) =>
           previousValue || currentValue.type === UserTypes.Manager,
         false,
